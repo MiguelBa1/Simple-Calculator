@@ -44,6 +44,7 @@ body {
   background-color: #777;
 }
 .container #calculator #result {
+  text-align: end;
   display: inherit;
   grid-column: 1/5;
   overflow: auto;
@@ -54,6 +55,7 @@ body {
   color: #eee;
 }
 .container #calculator #ans {
+  font-size: .9em;
   justify-content: end;
   align-items: end;
   color: #FFC300;

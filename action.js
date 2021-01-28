@@ -1,41 +1,60 @@
 const display = document.getElementById("display");
 const operators = document.querySelectorAll(".operator");
 const numbers = document.querySelectorAll(".number");
+const ans = document.getElementById('ans')
 let resultDisplayed = false
 for (let num of numbers) {
     num.addEventListener("click", () => {
-        if (resultDisplayed) {
-            display.innerText = "0"
-            resultDisplayed = false
-        }
-        if (display.innerText == "0") {
+        let lastChar = ans.innerText[ans.innerHTML.length - 1];
+        if (ans.innerText == "0") {
+            ans.innerText = num.value;
+            display.innerText = num.value;
+        } else if (lastChar.match(/[\+\-\/x]/)) {
+            ans.innerText += num.value;
             display.innerText = num.value;
         } else {
+            ans.innerText += num.value;
             display.innerText += num.value;
         }
     })
 }
 for (let opr of operators) {
     opr.addEventListener("click", () => {
-        let currentString = display.innerText;
-        let lastChar = display.innerText[display.innerHTML.length - 1];
-        if (resultDisplayed) {
-            display.innerText = "0"
-            resultDisplayed = false
-        }
-        else if (lastChar.match(/[\+\-\/x]/)) {
-            display.innerText = currentString.substring(0, currentString.length - 1) + opr.innerHTML
+        let currentString = ans.innerText;
+        let lastChar = ans.innerText[ans.innerHTML.length - 1];
+        if (opr.innerHTML == '-') {
+            if (lastChar.match(/[\+\/x]/)) {
+                ans.innerText += opr.innerText
+            } else if (lastChar != '-') {
+                ans.innerText += opr.innerText
+            }
+            display.innerText = opr.innerText
+        } else if (lastChar.match(/[\+\/x]/)) {
+            ans.innerText = currentString.substring(0, currentString.length - 1) + opr.innerText
+            display.innerText = opr.innerText
+        } else if (opr.innerText != '-' && lastChar == '-') {
+            ans.innerText = currentString.substring(0, currentString.length - 2) + opr.innerText;
+            display.innerText = opr.innerText
         } else {
-            display.innerText += opr.innerHTML;
+            ans.innerText += opr.innerText
         }
     })
 }
 document.getElementById("equals").addEventListener("click", () => {
-    let inputString = display.innerText
+    let inputString = ans.innerText
     //firts we must split the string in the input by the operators
     let numbers = inputString.split(/[\+\-\/x]/)
+    console.log(numbers)
     //then we need too the operators
     let oprs = inputString.match(/[\+\-\/x]/g, "")
+    //sanitaze the array for '12+-5' like
+    let blank = numbers.indexOf('')
+    while (blank != -1) {
+        numbers[blank+1] = '-' + numbers[blank+1]
+        numbers.splice(blank, 1)
+        oprs.splice(blank, 1)
+        blank = numbers.indexOf('')
+    }
     // in the mathematical hierarchy, we must loop through the array
     let divide = oprs.indexOf("/")
     while (divide != -1){
@@ -62,17 +81,20 @@ document.getElementById("equals").addEventListener("click", () => {
         plus = oprs.indexOf("+")
     }
     display.innerText = numbers[0].toString()
+    ans.innerText = numbers[0].toString()
     resultDisplayed = true
 })
 document.getElementById("decimal").addEventListener("click", () => {
-    let currentString = display.innerText;
+    let currentString = ans.innerText;
     if (currentString.match(/\./g) <= 1) {
         display.innerText = currentString + ".";
+        ans.innerText = currentString + ".";
     } else if (currentString.match(/[\+\-\/\*]/g)) {
         display.innerText = currentString + ".";
+        ans.innerText = currentString + ".";
     } 
-    console.log(currentString.match(/[\+\-\/\*]/g), currentString)
 })
 document.getElementById('clear').addEventListener('click', () => {
     display.innerText = '0'
+    ans.innerText = '0'
 })

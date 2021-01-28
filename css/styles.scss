@@ -40,6 +40,7 @@ body {
             }
         }
         #result {
+            text-align: end;
             display: inherit;
             grid-column: 1 / 5;
             overflow: auto;
